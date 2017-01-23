@@ -2,9 +2,16 @@ require 'vault'
 require 'pp'
 require 'json'
 
-platform = 'dev'
-address = 'http://vault-server-address:8200'
-root_token = 'root-token'
+puts "Begin to initial environnement for a platform on vault for Selfdeploy"
+puts "Please enter the Platform's name(Case Sensitive): "
+platform = gets.chomp
+puts ''
+puts "Please enter the Vault server's address(http://addresss:port): "
+address = gets.chomp
+puts ''
+puts "Please enter the root token of this Vault server: "
+root_token = gets.chomp
+puts ''
 
 client = Vault::Client.new(address: address, token: root_token)
 
@@ -16,6 +23,7 @@ platform_admin_policy = {
     "sys/policy/#{platform}/*": { policy: 'sudo' },
     'auth/token/*': { policy: 'sudo' },
     "secret/#{platform}/*": { policy: 'sudo' },
+    "secret/#{platform}": { policy: 'sudo' }
   }
 }
 
@@ -23,8 +31,7 @@ platform_admin_policy = {
 client.sys.put_policy("#{platform}/admin", JSON.dump(platform_admin_policy))
 platform_wrapped = client.auth_token.create(policies: ["#{platform}/admin"])
 
-pp "please save these informations to platform #{platform}'s sd-service"
-pp "sd_service type: vault"
-pp "sd_service key_id: #{platform}"
-pp "sd_service secret: #{platform_wrapped.auth.client_token}"
-
+puts "Please save these informations to platform #{platform}'s sd-service!!!"
+puts "  sd_service type:   vault"
+puts "  sd_service key_id: #{platform}"
+puts "  sd_service secret: #{platform_wrapped.auth.client_token}"
