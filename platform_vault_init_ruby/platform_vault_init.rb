@@ -35,3 +35,19 @@ puts "Please save these informations to platform #{platform}'s sd-service!!!"
 puts "  sd_service type:   vault"
 puts "  sd_service key_id: #{platform}"
 puts "  sd_service secret: #{platform_wrapped.auth.client_token}"
+
+puts "these information has been save into ./platform_keys"
+
+begin
+  file = File.open("./platform_keys", "w") do |f|
+    f << "#{address}\n"
+    f << "#{platform}\n"
+    f << "#{platform_wrapped.auth.client_token}\n"
+    f << "\n"
+  end
+rescue IOError
+  #some error occur, dir not writable etc.
+  puts "File can not be write!"
+ensure
+  file.close unless file.nil?
+end
